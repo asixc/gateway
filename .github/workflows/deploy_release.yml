@@ -43,10 +43,13 @@ jobs:
 
       - name: Actualizar docker-compose.yml con la versión
         run: |
-          # Actualiza la línea de la imagen en el archivo montado en /workspace/docker-compose.yml
+          # Dar permisos de escritura al directorio /workspace para permitir la creación de archivos temporales
+          chmod 777 /workspace
+          # Actualiza la línea de la imagen para que use la DEPLOY_VERSION
           sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" /workspace/docker-compose.yml
           echo "Contenido actualizado de docker-compose.yml:"
           cat /workspace/docker-compose.yml
+      
       
 
       - name: Levantar servicios con Docker Compose
