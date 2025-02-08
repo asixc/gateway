@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
@@ -31,31 +32,52 @@ public class Config {
                         .uri("http://food-log-api-native:8081"))
                 .build();
     }
+    /*
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+            final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            final CorsConfiguration config = getCorsConfiguration();
 
+            // Registrar la configuración en todas las rutas
+            source.registerCorsConfiguration("/**", config);
+            return source;
+        }
+
+
+            private static CorsConfiguration getCorsConfiguration() {
+                final CorsConfiguration config = new CorsConfiguration();
+                //config.setAllowedOriginPatterns(List.of("http://172.24.*", "https://172.24.*"));
+                config.addAllowedOriginPattern("*");
+                // Métodos HTTP permitidos
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                // ❌ NO es necesario allowCredentials(true) para JWT
+                // config.setAllowCredentials(true); // 🔴 NO lo incluyas
+                // Permitir encabezados, incluyendo Authorization para JWT
+                config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                return config;
+            }
+*/
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration config = getCorsConfiguration();
+    public CorsWebFilter corsWebFilter() {
+        CorsConfiguration config = new CorsConfiguration();
 
-        // Registrar la configuración en todas las rutas
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+        // Permitir cualquier origen (ajústalo si es necesario)
+        config.addAllowedOrigin("*");
 
-    private static CorsConfiguration getCorsConfiguration() {
-        final CorsConfiguration config = new CorsConfiguration();
-
-        //config.setAllowedOriginPatterns(List.of("http://172.24.*", "https://172.24.*"));
-        config.addAllowedOriginPattern("*");
-        // Métodos HTTP permitidos
+        // Métodos permitidos, incluyendo OPTIONS para Preflight
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // ❌ NO es necesario allowCredentials(true) para JWT
-        // config.setAllowCredentials(true); // 🔴 NO lo incluyas
+        // Permitir todos los headers
+        config.setAllowedHeaders(List.of("*"));
 
-        // Permitir encabezados, incluyendo Authorization para JWT
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        return config;
+        // Permitir credenciales si es necesario (JWT, cookies, etc.)
+        config.setAllowCredentials(true);
+
+        // Registrar la configuración para todas las rutas
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsWebFilter(source);
     }
 
 }
