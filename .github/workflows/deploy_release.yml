@@ -49,5 +49,11 @@ jobs:
           echo "Contenido actualizado de docker-compose.yml:"
           cat /workspace/docker-compose.yml
 
-      - name: Levantar únicamente el servicio gateway-service con Docker Compose
-        run: docker compose -f /workspace/docker-compose.yml up -d --no-deps --remove-orphans gateway-service
+      - name: Detener y eliminar contenedor antiguo si existe
+        run: |
+          docker ps -q --filter "name=gateway-service" | grep -q . && docker stop gateway-service && docker rm gateway-service || true
+
+      - name: Levantar servicio con nueva imagen
+        run: |
+          docker compose -f /workspace/docker-compose.yml up -d --no-recreate gateway-service
+      
