@@ -20,7 +20,7 @@ jobs:
           # Extrae la versión completa, por ejemplo "0.0.1-SNAPSHOT"
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           # Si deseas eliminar el sufijo "-SNAPSHOT", descomenta la siguiente línea:
-          VERSION=${VERSION//-SNAPSHOT/}
+          # VERSION=${VERSION//-SNAPSHOT/}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "::set-output name=VERSION::$VERSION"
           echo "Versión obtenida: $VERSION"
