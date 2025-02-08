@@ -4,12 +4,6 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsWebFilter;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Configuration
 public class Config {
@@ -24,25 +18,23 @@ public class Config {
                                 .setResponseHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
                                 .setResponseHeader("Access-Control-Allow-Headers", "*")
                                 .setResponseHeader("Access-Control-Max-Age", "3600")
-                                .modifyResponseBody(String.class, String.class, (exchange, body) -> Mono.just(""))
                         )
-                        .uri("no://op")) // 🚀 Esto evita que la petición OPTIONS llegue al backend
-                .route(r -> r.path("/api/v1/todo/**")
+                        .uri("no://op")) // Responde directamente a OPTIONS sin tocar el backend
+                .route("meal-logs", r -> r
+                        .path("/api/v1/meal-logs/**")
                         .filters(f -> f
-                                .addResponseHeader("Access-Control-Allow-Origin", "*")
-                                .addResponseHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                                .addResponseHeader("Access-Control-Allow-Headers", "*")
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
+                        )
+                        .uri("http://food-log-api-native:8081")) // Verifica que el contenedor tenga el hostname correcto
+                .route("todo-service", r -> r
+                        .path("/api/v1/todo/**")
+                        .filters(f -> f
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
                         )
                         .uri("http://todo-api-native-app:8080"))
-                .route(r -> r.path("/api/v1/meal-logs/**")
-                        .filters(f -> f
-                                .addResponseHeader("Access-Control-Allow-Origin", "*")
-                                .addResponseHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                                .addResponseHeader("Access-Control-Allow-Headers", "*")
-                        )
-                        .uri("http://food-log-api-native:8081"))
                 .build();
     }
+
     /*
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
@@ -67,7 +59,7 @@ public class Config {
                 config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                 return config;
             }
-*/
+
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -90,5 +82,5 @@ public class Config {
 
         return new CorsWebFilter(source);
     }
-
+*/
 }
