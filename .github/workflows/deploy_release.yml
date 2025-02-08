@@ -44,7 +44,7 @@ jobs:
       - name: Actualizar docker-compose.yml con la versión (usando copia temporal)
         run: |
           cp /workspace/docker-compose.yml /tmp/docker-compose.temp.yml
-          sed -i "s|^ *image: gateway-service:.*|image: gateway-service:${{ env.DEPLOY_VERSION }}|" /tmp/docker-compose.temp.yml
+          sed -i "s|^\( *\)image: gateway-service:.*|\1image: gateway-service:${{ env.DEPLOY_VERSION }}|" /tmp/docker-compose.temp.yml
           cp /tmp/docker-compose.temp.yml /workspace/docker-compose.yml
           echo "Contenido actualizado de docker-compose.yml:"
           cat /workspace/docker-compose.yml
