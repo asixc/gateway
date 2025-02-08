@@ -15,7 +15,8 @@ jobs:
 
       - name: Obtener versión del JAR desde el pom.xml
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -E '^[0-9]+\.[0-9]+\.[0-9]+')
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION=${VERSION//-SNAPSHOT/}  # Elimina "-SNAPSHOT"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Verificar que la versión no está vacía
@@ -25,7 +26,12 @@ jobs:
           VERSION: ${{ env.VERSION }}
 
       - name: Construir la imagen Docker
-        run: docker build -t gateway:$VERSION .
+        run: |
+          if [[ -z "${{ env.VERSION }}" ]]; then
+            echo "ERROR: VERSION está vacía. Verifica la obtención desde el pom.xml"
+            exit 1
+          fi
+          docker build -t gateway:${{ env.VERSION }} .
 
       - name: Guardar la imagen
         run: docker save -o /workspace/gateway-$VERSION.tar gateway:$VERSION
