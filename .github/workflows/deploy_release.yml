@@ -39,7 +39,7 @@ jobs:
 
       - name: Construir la imagen Docker
         run: |
-          docker build --no-cache --build-arg VERSION=${{ env.ARTIFACT_VERSION }} -t gateway:${{ env.DEPLOY_VERSION }} .
+          docker build --no-cache --build-arg VERSION=${{ env.ARTIFACT_VERSION }} -t gateway-service:${{ env.DEPLOY_VERSION }} .
 
       - name: Actualizar docker-compose.yml con la versión (usando copia temporal)
         run: |
@@ -50,4 +50,4 @@ jobs:
           cat /workspace/docker-compose.yml
 
       - name: Levantar únicamente el servicio gateway-service con Docker Compose
-        run: docker-compose -f /workspace/docker-compose.yml up -d gateway-service
+        run: docker compose -f /workspace/docker-compose.yml up -d --no-deps --no-recreate gateway-service
