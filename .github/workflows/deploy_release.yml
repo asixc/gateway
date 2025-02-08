@@ -1,0 +1,52 @@
+name: Deploy Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # El runner self-hosted debe tener acceso al Docker daemon
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Obtener versión del pom.xml
+        id: get_version
+        run: |
+          # Obtiene la versión completa, por ejemplo "0.0.1-SNAPSHOT"
+          ARTIFACT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "ARTIFACT_VERSION=$ARTIFACT_VERSION" >> $GITHUB_ENV
+          
+          # Generar DEPLOY_VERSION removiendo el sufijo "-SNAPSHOT"
+          DEPLOY_VERSION=${ARTIFACT_VERSION/-SNAPSHOT/}
+          echo "DEPLOY_VERSION=$DEPLOY_VERSION" >> $GITHUB_ENV
+          
+          echo "::set-output name=ARTIFACT_VERSION::$ARTIFACT_VERSION"
+          echo "::set-output name=DEPLOY_VERSION::$DEPLOY_VERSION"
+          echo "Versión del artifact: $ARTIFACT_VERSION, Versión para despliegue: $DEPLOY_VERSION"
+
+      - name: Validar que la versión no esté vacía
+        run: |
+          if [ -z "${{ env.ARTIFACT_VERSION }}" ] || [ -z "${{ env.DEPLOY_VERSION }}" ]; then
+            echo "ERROR: Una de las variables de versión está vacía."
+            exit 1
+          fi
+          echo "Construyendo la imagen Docker con ARTIFACT_VERSION: ${{ env.ARTIFACT_VERSION }} y DEPLOY_VERSION: ${{ env.DEPLOY_VERSION }}"
+
+      - name: Construir la imagen Docker
+        run: |
+          docker build --build-arg ARTIFACT_VERSION=${{ env.ARTIFACT_VERSION }} -t gateway:${{ env.DEPLOY_VERSION }} .
+
+      - name: Actualizar docker-compose.yml con la versión
+        run: |
+          # Se actualiza la línea de la imagen para que use la DEPLOY_VERSION
+          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" docker-compose.yml
+          echo "Contenido actualizado de docker-compose.yml:"
+          cat docker-compose.yml
+
+      - name: Levantar servicios con Docker Compose
+        run: docker compose up -d
