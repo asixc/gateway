@@ -49,11 +49,16 @@ jobs:
           echo "Contenido actualizado de docker-compose.yml:"
           cat /workspace/docker-compose.yml
 
-      - name: Detener y eliminar contenedor antiguo si existe
+      - name: Desconectar servicio de redes problemáticas antes de levantarlo
         run: |
-          docker ps -q --filter "name=gateway-service" | grep -q . && docker stop gateway-service && docker rm gateway-service || true
+          docker network disconnect workspace_backend gateway-service || true
+          docker network disconnect api gateway-service || true
 
-      - name: Levantar servicio con nueva imagen
+      - name: Levantar servicio con nueva imagen sin tocar redes
         run: |
-          docker compose -f /workspace/docker-compose.yml up -d --no-recreate gateway-service
-      
+          docker compose -f /workspace/docker-compose.yml up -d --no-recreate --no-deps gateway-service
+
+      - name: Reconectar servicio a las redes después de levantarlo
+        run: |
+          docker network connect workspace_backend gateway-service || true
+          docker network connect api gateway-service || true
