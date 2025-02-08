@@ -43,8 +43,6 @@ public class Config {
                         .uri("http://food-log-api-native:8081"))
                 .build();
     }
-
-
     /*
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
