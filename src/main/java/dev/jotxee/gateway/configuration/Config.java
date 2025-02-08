@@ -71,7 +71,7 @@ public class Config {
         config.setAllowedHeaders(List.of("*"));
 
         // Permitir credenciales si es necesario (JWT, cookies, etc.)
-        config.setAllowCredentials(true);
+        //config.setAllowCredentials(true);
 
         // Registrar la configuración para todas las rutas
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
