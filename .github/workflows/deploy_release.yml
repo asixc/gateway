@@ -63,4 +63,9 @@ jobs:
       - name: Reconectar el contenedor a la red API (si es necesario)
         run: |
           docker network connect deployments_api gateway-service || true
+
+      - name: Eliminar imágenes que no están en uso
+        run: |
+          docker image prune -a -f
+
       

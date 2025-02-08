@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -46,8 +45,8 @@ public class Config {
     private static CorsConfiguration getCorsConfiguration() {
         final CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("http://172.24.*", "https://172.24.*"));
-
+        //config.setAllowedOriginPatterns(List.of("http://172.24.*", "https://172.24.*"));
+        config.addAllowedOriginPattern("*");
         // Métodos HTTP permitidos
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
