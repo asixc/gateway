@@ -41,11 +41,11 @@ jobs:
         run: |
           docker build --no-cache --build-arg VERSION=${{ env.ARTIFACT_VERSION }} -t gateway:${{ env.DEPLOY_VERSION }} .
 
-      - name: Actualizar docker-compose.yml con la versión
+      - name: Actualizar docker-compose.yml con la versión (usando copia temporal)
         run: |
-          # Forzar que sed use /tmp para crear archivos temporales
-          export TMPDIR=/tmp
-          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" /workspace/docker-compose.yml
+          cp /workspace/docker-compose.yml /tmp/docker-compose.temp.yml
+          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" /tmp/docker-compose.temp.yml
+          cp /tmp/docker-compose.temp.yml /workspace/docker-compose.yml
           echo "Contenido actualizado de docker-compose.yml:"
           cat /workspace/docker-compose.yml
 
