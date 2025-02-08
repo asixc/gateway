@@ -17,6 +17,12 @@ public class Config {
     @Bean
     public RouteLocator todoAppRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+                .route("cors-preflight", r -> r
+                        .method("OPTIONS")
+                        .filters(f -> f
+                                .addResponseHeader("Access-Control-Allow-Origin", "*")
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service Allow-Origin"))
+                        .uri("no://op")) // Responde directamente a OPTIONS sin ir al backend
                 .route(r -> r.path("/api/v1/todo/**")
                         .filters(f -> f
                                 //.addRequestHeader("Hello", "World"))
