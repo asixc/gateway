@@ -19,7 +19,10 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Verificar que la versión no está vacía
-        run: echo "Building Docker image with version: $VERSION"
+        run: |
+          echo "Building Docker image with version: $VERSION"
+        env:
+          VERSION: ${{ env.VERSION }}
 
       - name: Construir la imagen Docker
         run: docker build -t gateway:$VERSION .
