@@ -43,10 +43,11 @@ jobs:
 
       - name: Actualizar docker-compose.yml con la versión
         run: |
-          # Se actualiza la línea de la imagen para que use la DEPLOY_VERSION
-          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" docker-compose.yml
+          # Actualiza la línea de la imagen en el archivo montado en /workspace/docker-compose.yml
+          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.DEPLOY_VERSION }}|" /workspace/docker-compose.yml
           echo "Contenido actualizado de docker-compose.yml:"
-          cat docker-compose.yml
+          cat /workspace/docker-compose.yml
+      
 
       - name: Levantar servicios con Docker Compose
         run: docker compose up -d
