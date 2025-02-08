@@ -25,7 +25,6 @@ spring:
 #  DEBUG
 #logging.level.reactor.netty.http.client:
 #  DEBUG
-spring:
   cloud:
     gateway:
       globalcors:
