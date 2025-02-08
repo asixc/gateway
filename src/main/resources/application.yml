@@ -1,0 +1,36 @@
+server:
+  port: 8085
+spring:
+  application.name: gateway
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: todo-service
+#          #uri: ${TODO_ROUTE_URL:http://localhost:57347}
+#          uri: http://mi-app-spring
+#          predicates:
+#            - Path=/api/v1/todo/**
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: DEBUG
+#    reactor:
+#      netty:
+#        http:
+#          client: DEBUG
+#
+#logging.level.org.springframework.cloud.gateway:
+#  DEBUG
+#logging.level.reactor.netty.http.client:
+#  DEBUG
+
+logging:
+  level:
+    #org.springframework.cloud.gateway: TRACE  # Cambiar a TRACE para más detalles
+    org.springframework.web.reactive: DEBUG  # Para ver las peticiones WebFlux
+    org.springframework.http.server.reactive: DEBUG  # Para ver las peticiones HTTP
+    #org.springframework.boot.autoconfigure: DEBUG  # Para ver la configuración de Spring Boot
+    reactor.netty: DEBUG  # Para logs de Netty
+    reactor.netty.http.client: DEBUG
