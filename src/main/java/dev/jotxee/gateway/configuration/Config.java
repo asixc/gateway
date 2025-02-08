@@ -23,7 +23,8 @@ public class Config {
                 .route("meal-logs", r -> r
                         .path("/api/v1/meal-logs/**")
                         .filters(f -> f
-                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
+                                .setResponseHeader("Access-Control-Allow-Origin", "*")
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service2")
                         )
                         .uri("http://food-log-api-native:8081")) // Verifica que el contenedor tenga el hostname correcto
                 .route("todo-service", r -> r
