@@ -54,13 +54,13 @@ jobs:
           docker stop gateway-service || true
           docker rm gateway-service || true
 
-      - name: Crear y levantar el contenedor manualmente sin Docker Compose
+      - name: Crear y levantar el contenedor manualmente con la red correcta
         run: |
           docker run -d --name gateway-service \
-            --network=backend \
+            --network=deployments_backend \
             gateway-service:${{ env.DEPLOY_VERSION }}
 
       - name: Reconectar el contenedor a la red API (si es necesario)
         run: |
-          docker network connect api gateway-service || true
+          docker network connect deployments_api gateway-service || true
       
