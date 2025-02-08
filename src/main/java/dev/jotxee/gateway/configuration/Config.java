@@ -5,9 +5,9 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -24,9 +24,9 @@ public class Config {
                                 .setResponseHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
                                 .setResponseHeader("Access-Control-Allow-Headers", "*")
                                 .setResponseHeader("Access-Control-Max-Age", "3600")
-                                .setResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
+                                .modifyResponseBody(String.class, String.class, (exchange, body) -> Mono.just(""))
                         )
-                        .uri("no://op")) // Responde directamente sin ir al backend
+                        .uri("no://op")) // 🚀 Esto evita que la petición OPTIONS llegue al backend
                 .route(r -> r.path("/api/v1/todo/**")
                         .filters(f -> f
                                 .addResponseHeader("Access-Control-Allow-Origin", "*")
@@ -43,6 +43,7 @@ public class Config {
                         .uri("http://food-log-api-native:8081"))
                 .build();
     }
+
 
     /*
         @Bean
