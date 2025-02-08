@@ -50,4 +50,4 @@ jobs:
           cat /workspace/docker-compose.yml
 
       - name: Levantar únicamente el servicio gateway-service con Docker Compose
-        run: docker compose -f /workspace/docker-compose.yml up -d --no-deps --no-recreate gateway-service
+        run: docker compose -f /workspace/docker-compose.yml up -d --no-deps --remove-orphans gateway-service

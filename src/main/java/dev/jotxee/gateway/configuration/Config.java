@@ -46,12 +46,7 @@ public class Config {
     private static CorsConfiguration getCorsConfiguration() {
         final CorsConfiguration config = new CorsConfiguration();
 
-        // Orígenes permitidos
-        config.setAllowedOrigins(List.of(
-                "http://localhost",
-                "https://foodlog.jotxee.dev",
-                "https://dev.todo.full4media.com"
-        ));
+        config.setAllowedOriginPatterns(List.of("http://172.24.*", "https://172.24.*"));
 
         // Métodos HTTP permitidos
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
