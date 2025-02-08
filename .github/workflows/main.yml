@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+  workflow_dispatch:  # Permite ejecutar manualmente el workflow desde GitHub
 jobs:
   deploy:
     runs-on: self-hosted  # Usa el runner en Docker
