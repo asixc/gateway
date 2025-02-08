@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.jotxee</groupId>
 	<artifactId>gateway</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.8-SNAPSHOT</version>
 	<name>gateway</name>
 	<description>Gateway service</description>
 	<url/>
