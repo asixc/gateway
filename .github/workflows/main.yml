@@ -4,43 +4,46 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Permite ejecutar manualmente el workflow desde GitHub
+  workflow_dispatch:
+
 jobs:
   deploy:
-    runs-on: self-hosted  # Usa el runner en Docker
+    runs-on: self-hosted  # El runner self-hosted debe tener acceso al Docker daemon
 
     steps:
       - name: Clonar el repositorio
         uses: actions/checkout@v4
 
-      - name: Obtener versión del JAR desde el pom.xml
+      - name: Obtener versión del pom.xml
+        id: get_version
         run: |
+          # Extrae la versión completa, por ejemplo "0.0.1-SNAPSHOT"
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          VERSION=${VERSION//-SNAPSHOT/}  # Elimina "-SNAPSHOT"
+          # Si deseas eliminar el sufijo "-SNAPSHOT", descomenta la siguiente línea:
+          VERSION=${VERSION//-SNAPSHOT/}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "::set-output name=VERSION::$VERSION"
+          echo "Versión obtenida: $VERSION"
 
-      - name: Verificar que la versión no está vacía
+      - name: Validar que la versión no esté vacía
         run: |
-          echo "Building Docker image with version: $VERSION"
-        env:
-          VERSION: ${{ env.VERSION }}
+          if [ -z "${{ env.VERSION }}" ]; then
+            echo "ERROR: VERSION está vacía. Verifica la obtención desde pom.xml"
+            exit 1
+          fi
+          echo "Building Docker image with version: ${{ env.VERSION }}"
 
       - name: Construir la imagen Docker
         run: |
-          if [[ -z "${{ env.VERSION }}" ]]; then
-            echo "ERROR: VERSION está vacía. Verifica la obtención desde el pom.xml"
-            exit 1
-          fi
-          docker build -t gateway:${{ env.VERSION }} .
+          docker build --build-arg VERSION=${{ env.VERSION }} -t gateway:${{ env.VERSION }} .
 
-      - name: Guardar la imagen
-        run: docker save -o /workspace/gateway-$VERSION.tar gateway:$VERSION
-
-      - name: Cargar la imagen en Docker
-        run: docker load < /workspace/gateway-$VERSION.tar
-
-      - name: Actualizar el archivo de deployment en docker-compose.yml
-        run: sed -i "s/gateway:.*/gateway:$VERSION/" /workspace/docker-compose.yml
+      - name: Actualizar docker-compose.yml con la versión
+        run: |
+          # Se asume que en docker-compose.yml hay una línea que empieza con "image: gateway:"
+          # Se actualiza para que use la imagen con la versión recién construida.
+          sed -i "s|^ *image: gateway:.*|image: gateway:${{ env.VERSION }}|" docker-compose.yml
+          echo "Contenido actualizado de docker-compose.yml:"
+          cat docker-compose.yml
 
       - name: Levantar servicios con Docker Compose
-        run: docker-compose -f /workspace/docker-compose.yml up -d
+        run: docker compose up -d
