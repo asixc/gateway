@@ -1,7 +1,7 @@
 # -----------------------------
 # Stage 1: Build the application
 # -----------------------------
-FROM maven:3.9.2-eclipse-temurin:23 AS build
+FROM maven:3.9.9-eclipse-temurin-23-alpine AS build
 WORKDIR /app
 
 # Copiar el pom.xml y descargar dependencias (para aprovechar el caché)
