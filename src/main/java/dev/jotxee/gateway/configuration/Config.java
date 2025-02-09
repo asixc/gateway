@@ -11,27 +11,18 @@ public class Config {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("cors-preflight", r -> r
-                        .method("OPTIONS")
-                        .filters(f -> f
-                                .setResponseHeader("Access-Control-Allow-Origin", "*")
-                                .setResponseHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                                .setResponseHeader("Access-Control-Allow-Headers", "*")
-                                .setResponseHeader("Access-Control-Max-Age", "3600")
-                        )
-                        .uri("no://op")) // Responde directamente a OPTIONS sin tocar el backend
                 .route("meal-logs", r -> r
                         .path("/api/v1/meal-logs/**")
                         .filters(f -> f
                                 .setResponseHeader("Access-Control-Allow-Origin", "*")
-                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV MEAL-LOG Gateway Service")
                         )
                         .uri("http://food-log-api-native:8081")) // Verifica que el contenedor tenga el hostname correcto
                 .route("todo-service", r -> r
                         .path("/api/v1/todo/**")
                         .filters(f -> f
                                 .setResponseHeader("Access-Control-Allow-Origin", "*")
-                                .addResponseHeader("X-Powered-By", "JotxeeDEV Gateway Service")
+                                .addResponseHeader("X-Powered-By", "JotxeeDEV TODO Gateway Service")
                         )
                         .uri("http://todo-api-native-app:8080"))
                 .build();
