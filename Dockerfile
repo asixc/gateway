@@ -13,9 +13,9 @@ COPY src ./src
 
 # Se espera que el JAR se genere como gateway-${VERSION}.jar.
 # Debes pasar el build-arg VERSION (por ejemplo, 0.0.1-SNAPSHOT).
-ARG VERSION
 RUN mvn clean package -DskipTests && \
-    cp target/gateway-$(echo $VERSION | sed 's/-SNAPSHOT//').jar app.jar
+    JAR_FILE=$(ls target/gateway-*.jar | head -n 1) && \
+    cp "$JAR_FILE" target/gateway.jar
 
 # -----------------------------
 # Stage 2: Crear la imagen runtime
