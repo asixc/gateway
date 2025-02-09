@@ -15,7 +15,7 @@ COPY src ./src
 # Debes pasar el build-arg VERSION (por ejemplo, 0.0.1-SNAPSHOT).
 ARG VERSION
 RUN mvn clean package -DskipTests && \
-    cp target/gateway-${VERSION}.jar app.jar
+    cp target/gateway-$(echo $VERSION | sed 's/-SNAPSHOT//').jar app.jar
 
 # -----------------------------
 # Stage 2: Crear la imagen runtime

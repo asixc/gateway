@@ -39,7 +39,8 @@ jobs:
 
       - name: Construir la imagen Docker
         run: |
-          docker build --no-cache --build-arg VERSION=${{ env.ARTIFACT_VERSION }} -t gateway-service:${{ env.DEPLOY_VERSION }} .
+          docker build --no-cache --build-arg VERSION="${{ env.DEPLOY_VERSION }}" \
+          -t gateway-service:${{ env.DEPLOY_VERSION }} -t gateway-service:latest .
 
       - name: Actualizar docker-compose.yml con la versión (usando copia temporal)
         run: |
